@@ -1,30 +1,28 @@
 const express = require('express');
 const router = express.Router();
-const { authenticateToken } = require('../middleware/auth');
-const {
-    createOrder,
-    getOrders,
-    getOrderById,
-    updateOrderStatus,
-    cancelOrder
-} = require('../controllers/order.controller');
+const orderController = require('../controllers/order.controller');
+const { verifyToken, isAdmin } = require('../middleware/auth.middleware');
+const { validateObjectId } = require('../middleware/validation.middleware');
 
 // All order routes require authentication
-router.use(authenticateToken);
+router.use(verifyToken);
 
 // Create new order
-router.post('/', createOrder);
+router.post('/', orderController.createOrder);
 
-// Get all orders for the user
-router.get('/', getOrders);
+// Get user's orders
+router.get('/', orderController.getUserOrders);
 
-// Get specific order by ID
-router.get('/:orderId', getOrderById);
+// Get single order
+router.get('/:orderId', validateObjectId, orderController.getOrder);
 
 // Update order status (admin only)
-router.patch('/:orderId/status', updateOrderStatus);
+router.patch('/:orderId/status', isAdmin, validateObjectId, orderController.updateOrderStatus);
+
+// Add tracking information (admin only)
+router.patch('/:orderId/tracking', isAdmin, validateObjectId, orderController.addTrackingInfo);
 
 // Cancel order
-router.delete('/:orderId', cancelOrder);
+router.delete('/:orderId', validateObjectId, orderController.cancelOrder);
 
-module.exports = router; 
+module.exports = router;

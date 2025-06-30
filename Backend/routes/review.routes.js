@@ -1,22 +1,31 @@
 const express = require('express');
 const router = express.Router();
-const { authenticateToken } = require('../middleware/auth');
-const {
-    createReview,
-    getProductReviews,
-    updateReview,
-    deleteReview,
-    getReviewById
-} = require('../controllers/review.controller');
+const reviewController = require('../controllers/review.controller');
+const { verifyToken } = require('../middleware/auth.middleware');
+const { validateObjectId } = require('../middleware/validation.middleware');
 
 // Public routes
-router.get('/product/:productId', getProductReviews);
-router.get('/:reviewId', getReviewById);
+router.get('/product/:productId', validateObjectId, reviewController.getProductReviews);
 
 // Protected routes
-router.use(authenticateToken);
-router.post('/', createReview);
-router.put('/:reviewId', updateReview);
-router.delete('/:reviewId', deleteReview);
+router.use(verifyToken);
 
-module.exports = router; 
+// Create review
+router.post('/', reviewController.createReview);
+
+// Get user reviews
+router.get('/user', reviewController.getUserReviews);
+
+// Update review
+router.patch('/:reviewId', validateObjectId, reviewController.updateReview);
+
+// Delete review
+router.delete('/:reviewId', validateObjectId, reviewController.deleteReview);
+
+// Mark review as helpful
+router.post('/:reviewId/helpful', validateObjectId, reviewController.markHelpful);
+
+// Unmark review as helpful
+router.delete('/:reviewId/helpful', validateObjectId, reviewController.unmarkHelpful);
+
+module.exports = router;

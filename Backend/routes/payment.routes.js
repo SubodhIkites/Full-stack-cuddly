@@ -1,30 +1,22 @@
 const express = require('express');
 const router = express.Router();
-const { authenticateToken } = require('../middleware/auth');
-const {
-    createPaymentIntent,
-    confirmPayment,
-    getPaymentHistory,
-    getPaymentById,
-    refundPayment
-} = require('../controllers/payment.controller');
+const paymentController = require('../controllers/payment.controller');
+const { verifyToken } = require('../middleware/auth.middleware');
+const { validateObjectId } = require('../middleware/validation.middleware');
 
 // All payment routes require authentication
-router.use(authenticateToken);
+router.use(verifyToken);
 
 // Create payment intent
-router.post('/create-intent', createPaymentIntent);
+router.post('/create-intent', paymentController.createPaymentIntent);
 
 // Confirm payment
-router.post('/confirm', confirmPayment);
+router.post('/confirm', paymentController.confirmPayment);
 
-// Get payment history
-router.get('/history', getPaymentHistory);
+// Get payment details
+router.get('/:paymentId', validateObjectId, paymentController.getPaymentDetails);
 
-// Get specific payment
-router.get('/:paymentId', getPaymentById);
+// Process refund
+router.post('/:paymentId/refund', validateObjectId, paymentController.processRefund);
 
-// Refund payment
-router.post('/:paymentId/refund', refundPayment);
-
-module.exports = router; 
+module.exports = router;
