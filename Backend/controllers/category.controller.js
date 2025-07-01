@@ -5,9 +5,7 @@ const { createError } = require('../utils/error');
 // Get all categories
 exports.getCategories = async (req, res, next) => {
   try {
-    const categories = await Category.find()
-      .populate('parent', 'name')
-      .sort('order');
+    const categories = await Category.find();
 
     res.status(200).json({
       success: true,
@@ -21,8 +19,7 @@ exports.getCategories = async (req, res, next) => {
 // Get single category
 exports.getCategory = async (req, res, next) => {
   try {
-    const category = await Category.findById(req.params.id)
-      .populate('parent', 'name');
+    const category = await Category.findById(req.params.id);
 
     if (!category) {
       return next(createError(404, 'Category not found'));
@@ -118,8 +115,7 @@ exports.getCategoryHierarchy = async (req, res, next) => {
           path: 'subcategories',
           match: { isActive: true }
         }
-      })
-      .sort('order');
+      });
 
     res.status(200).json({
       success: true,
