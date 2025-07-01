@@ -1,13 +1,4 @@
-class AppError extends Error {
-  constructor(message, statusCode) {
-    super(message);
-    this.statusCode = statusCode;
-    this.status = `${statusCode}`.startsWith('4') ? 'fail' : 'error';
-    this.isOperational = true;
-
-    Error.captureStackTrace(this, this.constructor);
-  }
-}
+const { AppError, createError } = require('./error');
 
 const handleError = (err, res) => {
   const { statusCode = 500, message } = err;
@@ -18,4 +9,4 @@ const handleError = (err, res) => {
   });
 };
 
-module.exports = { AppError, handleError }; 
+module.exports = { AppError, createError, handleError };

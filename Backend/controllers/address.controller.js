@@ -1,5 +1,5 @@
 const Address = require('../models/address.model');
-const { AppError } = require('../utils/errorHandler');
+const { createError } = require('../utils/error');
 
 // Get all addresses for a user
 exports.getAddresses = async (req, res, next) => {
@@ -25,7 +25,7 @@ exports.getAddress = async (req, res, next) => {
     });
 
     if (!address) {
-      return next(new AppError('Address not found', 404));
+      return next(createError(404, 'Address not found'));
     }
 
     res.status(200).json({
@@ -100,7 +100,7 @@ exports.updateAddress = async (req, res, next) => {
     });
 
     if (!address) {
-      return next(new AppError('Address not found', 404));
+      return next(createError(404, 'Address not found'));
     }
 
     // Update fields
@@ -137,7 +137,7 @@ exports.deleteAddress = async (req, res, next) => {
     });
 
     if (!address) {
-      return next(new AppError('Address not found', 404));
+      return next(createError(404, 'Address not found'));
     }
 
     await address.deleteOne();
@@ -171,7 +171,7 @@ exports.setDefaultAddress = async (req, res, next) => {
     });
 
     if (!address) {
-      return next(new AppError('Address not found', 404));
+      return next(createError(404, 'Address not found'));
     }
 
     address.isDefault = true;
@@ -185,4 +185,4 @@ exports.setDefaultAddress = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-}; 
+};
