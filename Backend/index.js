@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
-const mongoose = require("mongoose");
 const cors = require("cors");
+const { connect } = require("./db");
 const userRouter = require("./routes/user.routes");
 const productRouter = require("./routes/product.routes");
 const cartRouter = require("./routes/cart.routes");
@@ -24,12 +24,12 @@ app.use(cors({
 app.use(express.json());
 
 // Database connection
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb+srv://dbUser:V2Z-e9bkhuU7t3S@cluster0.ojhqnpa.mongodb.net/myDB?retryWrites=true&w=majority&appName=Cluster0";
-
-mongoose
-  .connect(MONGODB_URI)
+connect()
   .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+  .catch((err) => {
+    console.error("MongoDB connection error:", err);
+    process.exit(1);
+  });
 
 // Routes
 app.use("/api/v1/users", userRouter);
